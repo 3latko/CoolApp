@@ -19,7 +19,7 @@ extension CredentialsClient {
             invalidCharacterSet.insert(charactersIn: "0123456789!@#$%^&*(),.;'[]<>?:|{}-=_+")
             
             if username.rangeOfCharacter(from: invalidCharacterSet) != nil {
-                return .invalid(message: "Username must only contain letters")
+                return .invalid(message: "Username must contain only letters")
             }
             return .valid
         },
@@ -40,8 +40,8 @@ extension CredentialsClient {
 
 extension CredentialsClient {
     static let unimplemented = Self(
-        validateUsername: XCTUnimplemented("\(Self.self).validateCredentials"),
-        authenticate: XCTUnimplemented("\(Self.self).validateCredentials")
+        validateUsername: XCTUnimplemented("\(Self.self).validateUsername"),
+        authenticate: XCTUnimplemented("\(Self.self).authenticate")
     )
 }
 
