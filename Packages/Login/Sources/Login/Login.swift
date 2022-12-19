@@ -45,6 +45,7 @@ public struct Login: ReducerProtocol {
             var invalidCharacterSet = CharacterSet()
             invalidCharacterSet.insert(charactersIn: "0123456789!@#$%^&*(),.;'[]<>?:|{}-=_+")
 
+            // TODO: this should also be in a separate client
             if state.username.rangeOfCharacter(from: invalidCharacterSet) != nil {
                 state.errorMessage = "Username must only contain letters"
                 return .none
