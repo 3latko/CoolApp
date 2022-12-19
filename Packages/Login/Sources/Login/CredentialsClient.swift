@@ -8,12 +8,23 @@ public enum CredentialsResult: Equatable {
 }
 
 public struct CredentialsClient {
-    public var validateCredentials: (String, String) async throws -> CredentialsResult
+    public var validateUsername: (String) -> CredentialsResult
+    public var authenticate: (String, String) async throws -> CredentialsResult
 }
 
 extension CredentialsClient {
     static let live = Self(
-        validateCredentials: { username, password in
+        validateUsername: { username in
+            var invalidCharacterSet = CharacterSet()
+            invalidCharacterSet.insert(charactersIn: "0123456789!@#$%^&*(),.;'[]<>?:|{}-=_+")
+            
+            if username.rangeOfCharacter(from: invalidCharacterSet) != nil {
+                return .invalid(message: "Username must only contain letters")
+            }
+            return .valid
+        },
+        authenticate: { username, password in
+            // simulate network request
             try await Task.sleep(for: .seconds(0.5))
             
             if username != "Zlatko" {
@@ -29,7 +40,8 @@ extension CredentialsClient {
 
 extension CredentialsClient {
     static let unimplemented = Self(
-        validateCredentials: XCTUnimplemented("\(Self.self).validateCredentials")
+        validateUsername: XCTUnimplemented("\(Self.self).validateCredentials"),
+        authenticate: XCTUnimplemented("\(Self.self).validateCredentials")
     )
 }
 

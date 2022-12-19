@@ -42,18 +42,14 @@ public struct Login: ReducerProtocol {
             return .none
             
         case .didTapLogin:
-            var invalidCharacterSet = CharacterSet()
-            invalidCharacterSet.insert(charactersIn: "0123456789!@#$%^&*(),.;'[]<>?:|{}-=_+")
-
-            // TODO: this should also be in a separate client
-            if state.username.rangeOfCharacter(from: invalidCharacterSet) != nil {
-                state.errorMessage = "Username must only contain letters"
+            if case let .invalid(message) = self.credentialsClient.validateUsername(state.username) {
+                state.errorMessage = message
                 return .none
             }
             
             state.isLoading = true
             return .task { [username = state.username, password = state.password] in
-                let result = try await self.credentialsClient.validateCredentials(username, password)
+                let result = try await self.credentialsClient.authenticate(username, password)
                 return .handleLoginResult(result)
             }
             
